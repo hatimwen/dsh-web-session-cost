@@ -1,6 +1,6 @@
 {
   "name": "dsh-web-session-cost",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Session cost estimate and DeepSeek account balance above the dsh web composer.",
   "type": "module",
   "main": "lib/index.js",

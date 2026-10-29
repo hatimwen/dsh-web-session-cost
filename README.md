@@ -11,8 +11,10 @@ TUI 版的 [`dsh-tui-session-cost`](https://github.com/hatimwen/dsh-tui-session-
 ```
 
 - **会话成本**：来自会话级 `tokenUsage` 投影（输入 / 缓存读 / 缓存写 / 输出），按 DeepSeek 公布的人民币价目表估算，高峰时段（北京时间工作日 09:00–12:00、14:00–18:00）翻倍，标记 `峰` / `谷`
-- **余额**：走 `account/getBalance` Remote 接口，读当前登录账户的钱包余额（优先 CNY；没有钱包额度时回退到赠送额度）
+- **余额**：宿主路由 `/api/dsh-web-session-cost/balance` 读当前登录账户的钱包余额（优先 CNY；没有钱包额度时回退到赠送额度）
+- 模型档位从会话的模型目录（`modelDirectories`）读取，pro / flash 自动切换价目表
 - 没有用量也没有余额时整行不渲染；余额每 60 秒刷新一次
+- 点击这一行会打开明细面板：分项 token 与金额、模型、峰谷时段、钱包构成，以及手动刷新
 
 ## 计价口径
 
@@ -21,7 +23,9 @@ TUI 版的 [`dsh-tui-session-cost`](https://github.com/hatimwen/dsh-tui-session-
 | flash（默认） | ¥1 / 1M | ¥0.02 / 1M | ¥4 / 1M |
 | pro | ¥4.5 / 1M | ¥0.15 / 1M | ¥13.5 / 1M |
 
-仅覆盖 DeepSeek 官方路由；平台账单才是权威值。节假日没有单独处理（web 端的 `dsh-usage` 插件有完整节假日表），所以法定节假日会按高峰价高估，误差方向偏高。
+仅覆盖 DeepSeek 官方路由；平台账单才是权威值。
+
+高峰判定按北京时间工作日 09:00–12:00、14:00–18:00；**中国法定节假日全天按谷时计**，周末同样是谷时。节假日表覆盖 2025–2026（取自 `@linxin666/dsh-usage` 内置的国务院放假安排，MIT），更晚的年份按工作日高峰处理，误差方向偏高而非偏低。
 
 ## 安装
 
@@ -31,12 +35,26 @@ dsh plugin --profile web add link:$(pwd)
 dsh plugin --profile web add dsh-web-session-cost
 ```
 
-安装后**重启一次 `dsh web`** 才会加载新的客户端 bundle；重启后刷新页面即可看到输入框上方的成本/余额行。
+安装后**重启一次 `dsh web`**：宿主半边（余额路由）只在启动时注册；客户端 bundle 之后改代码刷新即可，不必再重启。
+
+## 桌面版（DeepSeek Harness Desktop）
+
+桌面客户端加载的是同一套 web client bundle，插件本身兼容，但它有独立的 `desktop` profile，不会共享 `web` profile 里装的插件：
+
+```sh
+# 1. 先完整打开一次桌面版，让它在 ~/.dsh/profiles/desktop 完成初始化
+# 2. 完全退出桌面版（含托盘进程）
+dsh plugin --profile desktop add link:/path/to/dsh-web-session-cost
+# 3. 重新打开桌面版
+```
+
+注意：桌面端如果从自定义协议或 `file://` 加载页面，`fetch("/api/…")` 可能跨源而被拒绝，此时成本仍显示、余额会报错。这一点尚未在真实桌面端验证过。
 
 ## 要求
 
 - DSH `>= 0.2.1-rc.3`
 - 账户已登录（未登录时只显示成本，不显示余额）
+- 余额路由只接受回环地址；通过 remote-web-ui / 局域网从别的机器访问时余额会 403（成本不受影响）
 
 ## 实现
 
