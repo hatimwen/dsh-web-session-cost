@@ -1,0 +1,5 @@
+# dsh-web-session-cost bundle patch: one row that mounts the browser half.
+# The Host half is a deliberate no-op; everything happens in the web client.
+- insert:
+    - id: web-session-cost
+      name: dsh-web-session-cost
