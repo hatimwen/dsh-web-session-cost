@@ -1,5 +1,10 @@
 # dsh-web-session-cost
 
+> **已弃用 / Deprecated**
+>
+> 本仓库不再维护。适配代码已经合并回唯一的插件仓库：**[hatimwen/dsh-session-cost](https://github.com/hatimwen/dsh-session-cost)**。
+> 请不要安装 `dsh-web-session-cost`；请使用 `dsh-session-cost`，同一个插件同时支持 dsh web 和 Desktop。
+
 在 dsh web 输入框下方的状态栏里显示**本次会话成本估算**和 **DeepSeek 账户余额**，位置在「缓存命中」和「上下文已用」之间。
 
 TUI 版的 [`dsh-tui-session-cost`](https://github.com/hatimwen/dsh-tui-session-cost) 在 web 端没有对等物（web 客户端没有 `tuiStatus` 服务），这个插件注册到 web 的 `conversation.composer.dock` 槽位（order 2），补上同样的信息。
