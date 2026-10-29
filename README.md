@@ -40,8 +40,8 @@ dsh plugin --profile web add dsh-web-session-cost
 
 ## 实现
 
-- `lib/index.js`：宿主半边，故意为空
-- `lib/client.js`：浏览器 bundle，注册 `conversation.composer.dock` 行；成本来自 `useProjection("tokenUsage")`（扁平投影），余额来自 `remote.account.getBalance`
+- `lib/index.js`：宿主半边，注册 `GET /api/dsh-web-session-cost/balance`（仅回环），从 `deepseekAccount` 服务读余额
+- `lib/client.js`：浏览器 bundle，注册 `conversation.composer.dock` 行；成本来自 `useProjection("tokenUsage")`（扁平投影），余额来自宿主路由 `/api/dsh-web-session-cost/balance`
 
 ## License
 
