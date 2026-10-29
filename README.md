@@ -1,8 +1,8 @@
 # dsh-web-session-cost
 
-在 dsh web 的对话输入框上方显示**本次会话成本估算**和 **DeepSeek 账户余额**。
+在 dsh web 输入框下方的状态栏里显示**本次会话成本估算**和 **DeepSeek 账户余额**，位置在「缓存命中」和「上下文已用」之间。
 
-TUI 版的 [`dsh-tui-session-cost`](https://github.com/hatimwen/dsh-tui-session-cost) 在 web 端没有对等物（web 客户端没有 `tuiStatus` 服务），这个插件用 web 的 `conversation.input.dock` 槽位补上同样的信息。
+TUI 版的 [`dsh-tui-session-cost`](https://github.com/hatimwen/dsh-tui-session-cost) 在 web 端没有对等物（web 客户端没有 `tuiStatus` 服务），这个插件注册到 web 的 `conversation.composer.dock` 槽位（order 2），补上同样的信息。
 
 ## 显示内容
 
@@ -41,7 +41,7 @@ dsh plugin --profile web add dsh-web-session-cost
 ## 实现
 
 - `lib/index.js`：宿主半边，故意为空
-- `lib/client.js`：浏览器 bundle，注册 `conversation.input.dock` 行；成本来自 `useProjection("tokenUsage")`，余额来自 `remote.account.getBalance`
+- `lib/client.js`：浏览器 bundle，注册 `conversation.composer.dock` 行；成本来自 `useProjection("tokenUsage")`（扁平投影），余额来自 `remote.account.getBalance`
 
 ## License
 
